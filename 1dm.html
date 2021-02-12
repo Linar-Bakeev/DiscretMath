@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<meta charset="utf-8">
+	<title>1 lab</title>
+</head>
+<body>
+<!--- bjci!!!!!!!!!!!! 
+b - letter
+j - uneven-numbered
+c - number
+i - even-numbered
+-->
+<script >
+
+function Union(A, B){
+    var result = "";
+    for(var i = 0; i < A.length; i++)
+    {
+        if(A[i] != A[i+1])
+        result += A[i] + " ";
+    }
+    for(var i = 0; i < B.length; i++)
+    {
+        var flag = 0;
+        for(var j = 0; j < A.length; j++)
+        {
+            if(A[j] == B[i])
+            {
+                flag = 1;
+                break;
+            }
+        }
+        if(flag == 0)
+        {
+            result += B[i] + " ";
+        }
+    }
+    return "Результат объединения получилось: \n" + result;
+}
+
+function Intersection(A, B){
+    var result1 = "";
+    for (var i = 0; i < B.length; i++)
+    {
+		if (A.indexOf(B[i]) != -1)
+		{
+			result1.push(B[i]);
+		}
+	}
+    return "После пересечения получилось: \n" + result1;
+}
+
+function addition(A,B) {
+	var res3 = "";
+    for(var i = 0; i < A.length; i++)
+    {
+        for(var j = 0; j < B.length; j++)
+        {
+            if(A[i] != A[i + 1] && A[i] != B[j])
+            {
+                res3 += " " + A[i];
+                break;
+            }
+            else
+            {
+                i++;
+            }
+        }
+    }
+    return "После выполнения дополнения получилось:\n" + res3;
+}
+
+function difference(A,B) 
+{
+	var res4 = "";
+	for (var i = 0; i < A.length; i++) 
+	{
+		var f = 0;
+		for (var j = 0; j < B.length; j++)
+		{
+			if(A[i]==B[j])
+			{
+				f = 1;
+				break;
+			}
+		}
+		if (f==0) 
+		{
+			res4 += A[i]+ " ";
+		}
+	}
+
+	for (var i = 0; i < B.length; i++) 
+	{
+		var f = 0;
+		for (var j = 0; j < A.length; j++)
+		{
+			if(A[j] == B[i])
+			{
+				f = 1;
+				break;
+			}
+		}
+		if (f==0) 
+		{
+			res4 += B[i]+"";
+		}
+	}
+	return "После выполнения симметричной разности получилось: \n"+res4;
+}
+
+
+function input()
+{
+    var A = document.getElementById('arrA').value;
+    A = A.split(' ');
+   
+    var B = document.getElementById('arrB').value;
+    B = B.split(' ');
+    
+    document.getElementById('unionres').innerHTML = "" + Union(A,B);
+    document.getElementById('intersectionres').innerHTML = "" + Intersection(A, B);
+    document.getElementById('additionres').innerHTML = "" + addition(A, B);
+    document.getElementById('differenceres').innerHTML = "" + difference(A, B);
+}
+</script> 
+	
+<center><h1>Введите два множества в следующих строках</h1>
+<form onsubmit="input();return false;">
+	<p style="font-size: 24px; color:  #ff11aa;">Первое множество: 
+		<input type="text" id="arrA" pattern="([A-Za-z][02468]\d[13579]\s{0,1})*"> <br>
+	</p>
+	<p style="font-size: 24px; color:  #ff11aa;">Второе множество: 
+		<input type = "text" id="arrB" pattern="([A-Za-z][02468]\d[13579]\s{0,1})*"> <br>
+	</p>
+	<input type="submit" value="Выполнить" >
+</form>
+
+<h3>Ввод производится по следующему формату: bjci, где b - letter, <br> j - uneven-numbered, c - number, i - even-numbered</h3>
+<p id="unionres"></p>
+<p id="intersectionres"></p>
+<p id="additionres"></p>
+<p id="differenceres"></p>
+
+
+</center>
+</body>
+</html>
