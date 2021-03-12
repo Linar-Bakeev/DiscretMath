@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+    
+<head>
+<title>Laboratry work 2</title>
+</head>
+
+<boby>
+<script>
+/*                                                              *     
+ *                                                              *
+ * Глобальные перемнные                                         *
+ *                                                              *
+ *                                                              */
+var test = [];
+var reflexivity = 0;
+var symmetry = 0;
+var skewsymmetry = 0;
+var transitivity = 0;
+
+
+/*                                                              *
+ * Функция Check проверка массива на пустые или  повторяющиеся  * 
+ * элементы                                                     *
+ *                                                              *
+ * @ param arr                                                  *
+ *                                                              *
+ * return NULL                                                  *
+ *                                                              *
+ * метод splice позволяет изменить содержимое массива за        *
+ * счёт удаления существующих элементов, и/или добавления       *
+ * новых элементов в массив.                                    *
+ *                                                              *
+ *                                                              */
+
+function Check(arr){
+    for(var i = 0; i < arr.length; i++){
+        if(arr[i] == ""){
+            arr.splice(i, 1);
+            i--;
+        } else if (arr[i] == " ") {
+            arr.splice(i, 1);
+            i--;
+        }
+    }
+    for(var i = 0; i < arr.length; i++){
+        for(var j = 0; j < arr.length; j++){
+            if(j == i) {
+                continue;
+            }
+            if (arr[i] == arr[j]){
+                arr.splice(j, 1);
+                i--;
+                break;
+            }
+        }
+    }
+}
+
+
+/*                                                              *
+ * Функция GetUserData - валидация и вывод результата           *
+ *                                                              *
+ *  @ param n - номер массива                                   *
+ *  @ param arr - массив                                        *
+ *  @ param id - id массивa                                     *
+ *                                                              *
+ * return NULL                                                  *
+ *                                                              *        
+ * Конструктор Error создаёт объект ошибки.                     *     
+ * Когда Error используется как функции-- без new, она          *
+ * возвращает Error объект. Следовательно простой вызов         *
+ * Error произведет тот же результат, что и конструктор         *
+ * Error объявленный через new.                                 *
+ *                                                              *
+ * Метод split позволяет разбить строки на массив подстрок,     *
+ * используя заданную строку разделитель для определения        *
+ * места разбиения.                                             *
+ *                                                              */
+function getData(n, arr, id){
+
+    document.getElementById("result").innerHTML = ""
+    arr = document.getElementById(id).value;        
+    arr = arr.split(";");                               //разделяем элементы ;
+    Check(arr);
+    for(var i = 0; i < arr.length; i++){
+        arr[i] = arr[i].split(",");
+        for(var j = 0; j < arr[i].length; j++){        //добавляем пробел после каждого элемента
+            arr[i][j] = arr[i][j].split(" ");
+            Check(arr[i][j]);
+        }
+    }
+    var err = 0;                                      //проводим валидацию
+    for(var i = 0; i < arr.length; i++){                
+        var check = arr[i];
+        if(check.length > 2){
+            alert("Ошибка! Более двух символов в " + (i + 1) + "-ом элементе " + n + "-ого массива");
+            err++;
+        }
+        else if(check.length < 2){
+            alert("Ошибка! Менее двух символов в " + (i + 1) + "-ом элементе " + n + "-ого массива");
+            err++; 
+        }
+    }
+    if (err > 0){                                     
+        document.getElementById("result").innerHTML = "<br>"
+        throw new Error();
+    }
+    Reflexivity(arr);
+    Symmetry(arr);
+    SkewSymmetry(arr);
+    if(arr.length >= 3 && arr.length % 3 == 0){
+        Transitivity(arr);
+    }
+
+    //проверяем выполнение функции и выводим результат
+
+    if(reflexivity > 0){
+        document.getElementById("result").innerHTML += "Свойство рефлексивности<br>"
+    }
+    if(symmetry > 0){
+        document.getElementById("result").innerHTML += "Свойство симметричности<br>"
+    }
+    if(skewsymmetry > 0){
+        document.getElementById("result").innerHTML += "Свойство кососимметричности<br>"
+    }
+    if(transitivity > 0){
+        document.getElementById("result").innerHTML += "Свойство транзитивности<br>"
+    }
+}
+
+
+/*                                                              *
+ * Функция Reflexivity проверка на рефлексивность               * 
+ *                                                              *
+ * Проверяем отношения на свойство рефлексивности, т.е          *
+ * находим количетсво пар вида xRx, которое должно быть         *
+ * равное количеству введенных элементов                        *
+ *                                                              *
+ *                                                              *
+ * return NULL                                                  *
+ *                                                              *
+ * метод push() позволяет добавить один, или более элементов    *
+ * в конец массива.                                             *
+ *                                                              */
+
+function Reflexivity(arr){
+    var Element = [];
+    for(var i = 0; i < arr.length; i++){
+        for(var j = 0; j < arr[i].length; j++){
+            var flag = 1;
+            for(var k = 0; k < Element.length; k++){
+                if(arr[i][j][0] == Element[k]){
+                    flag = 0;
+                }
+            }
+            if(flag == 1){
+                Element.push(arr[i][j][0]);
+            }
+        }
+    }
+    for(var i = 0; i < arr.length; i++){
+        if((arr[i][0][0] == arr[i][1][0]) && (arr[i][0][0] != 0) && (arr[i][1][0] != 0)){
+            reflexivity++;
+        }
+    }
+    if(reflexivity != Element.length){
+        reflexivity = 0;
+    }
+}
+
+/*                                                              *
+ * Функция Symmetry проверка на симметричность                  * 
+ *                                                              *
+ * Проверяем отношения на свойство симметричности, т.е          *
+ * находим наличие пары xRy и yRx в массиве                     *
+ *                                                              *
+ * @param arr                                                   *
+ *                                                              *
+ * return NULL                                                  *
+ *                                                              */
+
+ function Symmetry(arr){
+     for(var i = 0; i < arr.length; i++){
+         for(var j = i + 1; j < arr.length; j++){
+             if((arr[i][0][0] == arr[j][1][0]) && (arr[i][1][0] == arr[j][0][0])){
+                 symmetry++;
+             }
+        }
+     }
+ } 
+
+/*                                                              *
+ * Функция SkewSymmetry проверка на кососимметричность          * 
+ *                                                              *
+ * Проверяем отношения на свойство кососимметричности, т.е      *
+ * проверяем отстутсвие пары xRy и yRx в массиве, учитывая      *
+ * исключение 0R0                                               *
+ *                                                              *
+ * @param arr                                                   *
+ *                                                              *
+ * return NULL                                                  *
+ *                                                              */
+
+ function SkewSymmetry(arr){
+     for(var i = 0; i < arr.length; i++){
+         for(var j = i + 1; j < arr.length; j++){
+             if(!((arr[i][0][0] == arr[j][1][0]) && (arr[i][1][0] == arr[j][0][0]))){
+                skewsymmetry++;
+            } else if ((arr[i][0][0] == arr[j][1][0]) && (arr[i][1][0] == arr[j][0][0])){
+                skewsymmetry = 0;
+                if((arr[i][0][0] == arr[j][0][0]) &&  (arr[i][1][0] == arr[j][1][0])){
+                    skewsymmetry++;
+                }
+                break;
+            }
+        }
+        if(skewsymmetry == 0){
+            break;
+        }
+     }
+ }
+
+ /*                                                             *
+ * Функция Transitivity проверка на транзитивность              * 
+ *                                                              *
+ * Проверяем отношения на свойство кососимметричности, т.е      *
+ * проверяем наличие пар вида xRy yRz xRz в массиве             *
+ *                                                              *
+ * @param arr                                                   *
+ *                                                              *
+ * return NULL                                                  *
+ *                                                              */
+
+ function Transitivity(arr) {
+        for (var i = 0; i < arr.length; i++) {
+            for (var j = i + 1; j < arr.length - 1; j++) {
+                if ((arr[i][1][0] == arr[j][0][0]) && (arr[i][0][0] == arr[j + 1][0][0]) && (arr[j][1][0] == arr[j + 1][1][0])) {
+                transitivity++;
+                break;
+            }
+        }
+    }
+}
+
+</script>
+
+<div>
+    <form>
+        Введите элементы >>>>> 
+        <input type="text" name="array" id="arr"><br>
+        <input class='but' type="button" value="Выполнить" onClick="getData(1, test, 'arr')">
+    </form><br>
+    <p>    
+        Пояснение!<br>
+        Каждая пара элементов разделяется точкой с запятой (;)<br>
+        После каждого элемента ставится пробел ( )<br>
+        Символы в каждой паре разделяются запятой (,)<br>
+        Пример: 1,1; 1,1; 1,1<br><br>
+        Тестовые значение с соответствующим результатом: <br>
+        Рефлексивность: 1,1; 2,2; 3,3<br>
+        Симметричность: 1,2; 1,3; 3,1; 2,3; 2,1; 3,2<br>
+        Кососимметричность: 1,2; 1,3; 1,4<br>
+        Транзитивность: 1,2; 2,3; 1,3<br>
+        <br>
+    </p>
+
+
+</div>
+<p>Результат </p>
+<div id="result"></div>
+
+</boby>
+</html>
